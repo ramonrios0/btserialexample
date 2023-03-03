@@ -16,9 +16,9 @@ class DeviceConfig extends StatefulWidget {
 
 class _DeviceConfigState extends State<DeviceConfig> {
   late BluetoothConnection conn;
-  String _waitStatus = "Cargando papu...";
+  String _waitStatus = "Loading...";
   Color _waitColor = Colors.black;
-  String _txtButtonReload = "Checkeame esta";
+  String _txtButtonReload = "Reload";
   _DeviceConfigState();
   bool get isConnected => (conn.isConnected);
 
@@ -30,40 +30,40 @@ class _DeviceConfigState extends State<DeviceConfig> {
   Future<void> _connect() async {
     try {
       conn = await BluetoothConnection.toAddress(widget.deviceAdress);
-      const SnackBar(content: Text('Conectao\''));
+      const SnackBar(content: Text('Connected'));
       setState(() {
-        _waitStatus = "Conectao.";
+        _waitStatus = "Connected";
         _waitColor = Colors.green;
-        _txtButtonReload = "Checkeame esta";
+        _txtButtonReload = "Reload";
       });
     } catch (exception) {
       try {
         if (isConnected) {
-          const SnackBar(content: Text('Ya estai\' Conectao\''));
+          const SnackBar(content: Text('Already Connected'));
           setState(() {
-            _waitStatus = "Conectao.";
+            _waitStatus = "Connected";
             _waitColor = Colors.green;
-            _txtButtonReload = "Checkeame esta";
+            _txtButtonReload = "Reload";
           });
         } else {
-          const SnackBar(content: Text('No se pudo conectar papu :('));
+          const SnackBar(content: Text('Can\'t connect'));
           setState(() {
-            _waitStatus = "Sin conexión";
+            _waitStatus = "No connection";
             _waitColor = Colors.green;
-            _txtButtonReload = "Relodearme esta";
+            _txtButtonReload = "Retry";
           });
         }
       } catch (e) {
-        print('Iniciando...');
+        print('Initializing');
       }
     }
   }
 
   void waitLoading() {
     setState(() {
-      _waitStatus = "Cargando papu...";
+      _waitStatus = "Loading...";
       _waitColor = Colors.black;
-      _txtButtonReload = "Checkeame esta";
+      _txtButtonReload = "Reload";
     });
   }
 
@@ -94,7 +94,7 @@ class _DeviceConfigState extends State<DeviceConfig> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Text('Escribe el nombre de tu red WiFi',
+            const Text('Connect to WiFi Network',
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
@@ -103,31 +103,25 @@ class _DeviceConfigState extends State<DeviceConfig> {
             TextFormField(
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Por favor, rellene el campo';
+                  return 'Please, fill the field';
                 }
                 return null;
               },
               decoration: const InputDecoration(
-                  labelText: 'Nombre de la red / SSID',
+                  labelText: 'WiFi name / SSID',
                   border: OutlineInputBorder()),
               controller: ssidController,
             ),
-            const Text('Escribe la contraseña de tu red WiFi',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    height: 1,
-                    fontWeight: FontWeight.w600)),
             TextFormField(
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Por favor, rellene el campo';
+                  return 'Please, fill the field';
                 }
                 return null;
               },
               obscureText: _hide,
               decoration: InputDecoration(
-                  labelText: 'Contraseña',
+                  labelText: 'Password',
                   border: const OutlineInputBorder(),
                   suffix: InkWell(
                     onTap: _toogleHide,
@@ -143,7 +137,17 @@ class _DeviceConfigState extends State<DeviceConfig> {
                     _sendData(ssidController.text, passwordController.text);
                   }
                 },
-                child: Text('Conectar'))
+                child: const Text('Connect to WiFi')),
+                SizedBox(
+                      width: 100.0,
+                      child: ElevatedButton(
+                        onPressed: _reloadOrCheck,
+                        child: Text(
+                          _txtButtonReload,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
           ],
         ),
       ),
